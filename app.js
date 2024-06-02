@@ -4,6 +4,7 @@ const express = require('express');
 const ExpressWs = require('express-ws');
 
 const { GptService } = require('./services/gpt-service');
+const { GeminiGPTService } = require('./services/gemini-service');
 const { StreamService } = require('./services/stream-service');
 const { TranscriptionService } = require('./services/transcription-service');
 const { TextToSpeechService } = require('./services/tts-service');
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.post('/incoming', (req, res) => {
   res.status(200);
   res.type('text/xml');
+  console.log(process.env.SERVER);
   res.end(`
   <Response>
     <Connect>
@@ -31,7 +33,7 @@ app.ws('/connection', (ws) => {
   let streamSid;
   let callSid;
 
-  const gptService = new GptService();
+  const gptService = new GeminiGPTService();
   const streamService = new StreamService(ws);
   const transcriptionService = new TranscriptionService();
   const ttsService = new TextToSpeechService({});

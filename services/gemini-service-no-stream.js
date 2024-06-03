@@ -13,7 +13,7 @@ tools[0]["function_declations"].forEach((tool) => {
 });
 console.log(availableFunctions);
 
-class GeminiGPTService extends EventEmitter {
+class GeminiGPTServiceNoStream extends EventEmitter {
   constructor() {
     super();
     this.gemini = new GoogleGenerativeAI(apiKey);
@@ -75,40 +75,34 @@ class GeminiGPTService extends EventEmitter {
         },
      });
 
-    const result = await chat.sendMessageStream(text);
+    const result = await chat.sendMessage(text);
+    const response = await result.response;
+    const messageText = response.text();
+    let content = messageText;
+    let functionCall = response.functionCalls();
 
     let completeResponse = '';
     let partialResponse = '';
 
-    for await (const chunk of result.stream) {
-      let content = chunk.text() || '';
-      let functionCall = chunk.functionCalls();
-    //   console.log(chunk.candidates[0].content.parts[0]);
-      console.log('function call',chunk.functionCalls());
-      
-
-      // Step 2: Check if Gemini wants to call a function
-      if (functionCall) {
+    if (functionCall) {
         let functionResponse = await availableFunctions[functionCall[0].name](functionCall[0].args);
         await this.completion(functionResponse, interactionCount, 'function', functionCall[0].name);
-      } else {
-        // Continue conversation without function call
+    } else {
         completeResponse += content;
         partialResponse += content;
 
         const gptReply = { 
             partialResponseIndex: this.partialResponseIndex,
             partialResponse
-          };
+            };
 
-          this.emit('gptreply', gptReply, interactionCount);
-          this.partialResponseIndex++;
-          partialResponse = '';
-        }
+        this.emit('gptreply', gptReply, interactionCount);
+        this.partialResponseIndex++;
+        partialResponse = '';
     }
     this.userContext.push({'role': 'model', 'parts': [{'text': completeResponse}]});
     console.log(`GPT -> user context length: ${this.userContext.length}`.green);
   }
 }
 
-module.exports = { GeminiGPTService };
+module.exports = { GeminiGPTServiceNoStream };

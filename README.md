@@ -1,3 +1,5 @@
+# This fork has been updated to use the Gemini GPT service instead of OpenAI.
+
 # Call GPT: Generative AI Phone Calling
 
 Wouldn't it be neat if you could build an app that allowed you to chat with ChatGPT on the phone?
@@ -8,6 +10,7 @@ This app serves as a demo exploring three services:
 - [Deepgram](https://deepgram.com/) for Speech to Text
 - [elevenlabs](https://elevenlabs.io) for Text to Speech
 - [OpenAI](https://openai.com) for GPT prompt completion
+- [Gemini](https://gemini.google.com) for GPT prompt completion
 
 These service combine to create a voice application that is remarkably better at transcribing, understanding, and speaking than traditional IVR systems.
 
